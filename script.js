@@ -335,14 +335,11 @@ function parseAmount(value) {
   return (typeof value === "string" && value.startsWith("=")) ? 0 : parseFloat(value) || 0;
 }
 
-// Take Gross Earning from Excel
-const grossExcel = parseAmount(emp["Gross Earning"]);
-
 // Split Gross into heads
-const basic = Math.round(grossExcel * 0.50);
-const da = Math.round(grossExcel * 0.10);
-const hra = Math.round(grossExcel * 0.20);
-const con = Math.round(grossExcel * 0.20);
+const basic = parseAmount(emp["Basic"]);
+const da = parseAmount(emp["DA"]);
+const hra = parseAmount(emp["HRA"]);
+const con = parseAmount(emp["Conveyance"]);
 const ot = parseAmount(emp["OT Pay"]);
 const incentive = parseAmount(emp["Incentives"]);
 const special = parseAmount(emp["Special Allowance"]);
@@ -354,9 +351,9 @@ const pt = parseAmount(emp["PT"]);
 const adv = parseAmount(emp["Advances Deduction"]);
 const other = parseAmount(emp["Other Deductions"]);
 
-const gross = (basic + da + hra + con + ot + incentive + special + reimburse).toFixed(2);
-const deduction = (pf + esic + pt + adv + other).toFixed(2);
-const netPayable = (gross - deduction).toFixed(2);
+const gross = basic + da + hra + con + ot + incentive + special + reimburse;
+const deduction = pf + esic + pt + adv + other;
+const netPayable = gross - deduction;
 
   return `
   <div style="display: flex; justify-content: center; padding: -5px;">
@@ -368,8 +365,8 @@ const netPayable = (gross - deduction).toFixed(2);
           </td>
           <td style="width: 80%; text-align: left; vertical-align: middle;">
             <div style="text-align: center; line-height: 1.4;">
-              <strong>Pioneer Airbol Pvt. Ltd.</strong><br>
-              Gat No. 907, Hissa No. 2/2, Sanaswadi, Pune Nagar Road, Pune, Maharashtra 412 208<br>
+              <strong>Pioneer Enterprises (India) Pvt. Ltd.</strong><br>
+              Gat No. 943, Hissa No. 2/1/B/2/2, Sanaswadi, Shirur, Pune, Maharashtra 412 208<br>
               <strong>Phone:</strong> 95033 80001 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
               <strong>Email:</strong> team@pioneerentp.in
             </div>
@@ -405,7 +402,8 @@ const netPayable = (gross - deduction).toFixed(2);
           <td style="border: 1px solid black;"><strong>ESIC No.:</strong> ${emp["ESIC No."] || "N/A"}</td>
         </tr>
         <tr>
-          <td colspan="3" style="border: 1px solid black;"><strong>Annual Leave Balance:</strong> ${emp["Annual Leave Balance"] || "0"}</td>
+        <td style="border: 1px solid black;"><strong>Monthly Leaves Taken:</strong> ${emp["<Monthly Leaves Taken>"] || "0"}</td>
+          <td colspan="2" style="border: 1px solid black;"><strong>Annual Leave Balance:</strong> ${emp["Annual Leave Balance"] || "0"}</td>
           <td style="border: 1px solid black;"><strong>Present Days:</strong> ${emp["Present Days"]}</td>
         </tr>
       </table>
@@ -416,19 +414,19 @@ const netPayable = (gross - deduction).toFixed(2);
           <th colspan="2" style="border: 1px solid black; width: 50%;">Deductions</th>
         </tr>
         <tr>
-          <td style="border: 1px solid black;">Basic</td><td style="border: 1px solid black; width: 25%;">₹${basic}</td>
+          <td style="border: 1px solid black;">Basic</td><td style="border: 1px solid black; width: 25%;">₹${emp["Basic"] || 0}</td>
           <td style="border: 1px solid black;">Employee PF</td><td style="border: 1px solid black; width: 25%;">₹${emp["PF"] || 0}</td>
         </tr>
         <tr>
-          <td style="border: 1px solid black;">DA</td><td style="border: 1px solid black;">₹${da}</td>
+          <td style="border: 1px solid black;">DA</td><td style="border: 1px solid black;">₹${emp["DA"] || 0}</td>
           <td style="border: 1px solid black;">Employee ESIC</td><td style="border: 1px solid black;">₹${emp["ESIC"] || 0}</td>
         </tr>
         <tr>
-          <td style="border: 1px solid black;">HRA</td><td style="border: 1px solid black;">₹${hra}</td>
+          <td style="border: 1px solid black;">HRA</td><td style="border: 1px solid black;">₹${emp["HRA"] || 0}</td>
           <td style="border: 1px solid black;">PT</td><td style="border: 1px solid black;">₹${emp["PT"] || 0}</td>
         </tr>
         <tr>
-          <td style="border: 1px solid black;">Conveyance Allowance</td><td style="border: 1px solid black;">₹${con}</td>
+          <td style="border: 1px solid black;">Conveyance Allowance</td><td style="border: 1px solid black;">₹${emp["Conveyance"] || 0}</td>
           <td style="border: 1px solid black;">TDS</td><td style="border: 1px solid black;">₹${emp[""] || 0}</td>
         </tr>
         <tr>
@@ -448,8 +446,8 @@ const netPayable = (gross - deduction).toFixed(2);
           <td style="border: 1px solid black;"></td><td style="border: 1px solid black;"></td>
         </tr>
         <tr>
-          <td colspan="2" style="border: 1px solid black;"><strong>Gross Earnings: ₹${gross}</strong></td>
-          <td colspan="2" style="border: 1px solid black;"><strong>Total Deductions: ₹${deduction}</strong></td>
+          <td colspan="2" style="border: 1px solid black;"><strong>Gross Earnings: ₹ ${gross.toFixed(2)}</strong></td>
+          <td colspan="2" style="border: 1px solid black;"><strong>Total Deductions: ₹${deduction.toFixed(2)}</strong></td>
         </tr>
         <tr>
           <td colspan="4" style="border: 1px solid black;">
